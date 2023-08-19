@@ -1,13 +1,32 @@
 ext {
     mainClassName = "org.attias.open.interactive.simulation.desktop.DesktopLauncher"
-//    assetsDir = new File("assets")
+    assetsDir = null
+}
+
+gradle.projectsEvaluated {
+    def assetDirPath = System.getenv('IOS_ENV_PROJECT_ASSETS_DIR')
+    if (assetDirPath) {
+        def assetsDirFile = new File(assetDirPath)
+        if (assetsDirFile.exists() && assetsDirFile.isDirectory()) {
+            assetsDir = assetsDirFile
+            sourceSets.main.resources.srcDirs = [assetsDirFile]
+            println "Assets directory set to: ${assetsDirFile.absolutePath}"
+        } else {
+            println "Warning: The specified asset directory does not exist or is not a directory."
+        }
+    } else {
+        println "Warning: Environment variable IOS_ENV_PROJECT_ASSETS_DIR not set."
+    }
 }
 
 task run(dependsOn: classes, type: JavaExec) {
     main = project.mainClassName
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
-//    workingDir = project.assetsDir
+    if (project.assetsDir != null) {
+        println "workingDir set to Assets directory: ${project.assetsDir.absolutePath}"
+        workingDir = project.assetsDir
+    }
     ignoreExitValue = true
 }
 
@@ -15,7 +34,10 @@ task debug(dependsOn: classes, type: JavaExec) {
     main = project.mainClassName
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
-//    workingDir = project.assetsDir
+    if (project.assetsDir != null) {
+        println "workingDir set to Assets directory: ${project.assetsDir.absolutePath}"
+        workingDir = project.assetsDir
+    }
     ignoreExitValue = true
     debug = true
 }
