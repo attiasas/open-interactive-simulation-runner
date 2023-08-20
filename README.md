@@ -56,7 +56,7 @@ We highly recommend running Gradle with the ```-d```
 option to get useful and readable debug information if something goes wrong with your build.
 
 Please help us improve the library
-by [reporting any issues](https://github.com/jfrog/artifactory-gradle-plugin/issues/new/choose) you encounter.
+by [reporting any issues](https://github.com/attiasas/open-interactive-simulation-runner/issues/new/choose) you encounter.
 
 ## 🤝 Contributions
 
