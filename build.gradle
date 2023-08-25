@@ -16,7 +16,7 @@ buildscript {
 
 allprojects {
     group 'org.attias.open.interactive.simulation'
-    version '1.0.0'
+    version '0.1'
 
     ext {
         gdxVersion = '1.12.0'
