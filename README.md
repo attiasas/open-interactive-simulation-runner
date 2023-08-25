@@ -22,6 +22,11 @@ This project is built on the [LibGdx](https://libgdx.com/) framework and provide
 
 To streamline deployment, we've developed the [OIS deployer](https://github.com/attiasas/open-interactive-simulation-deployer) Gradle plugin. This plugin leverages the platform's features to facilitate the deployment of OIS projects on specific platforms based on your requirements by using this project.
 
+
+### 🚥 Requirements
+* Java version `15` or a more recent release.
+* Gradle version `7` or a newer version.
+
 ---
 ## 📦 Installation
 
