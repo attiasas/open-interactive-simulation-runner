@@ -1,6 +1,10 @@
+plugins { id 'org.beryx.runtime' version '1.8.4' }
+
+mainClassName = "org.attias.open.interactive.simulation.desktop.DesktopLauncher"
+def osName = System.getProperty('os.name').toLowerCase(Locale.ROOT)
+
 ext {
-    mainClassName = "org.attias.open.interactive.simulation.desktop.DesktopLauncher"
-    assetsDir = null
+    assetsDir = new File("../assets")
 }
 
 gradle.projectsEvaluated {
@@ -9,24 +13,17 @@ gradle.projectsEvaluated {
         def assetsDirFile = new File(assetDirPath)
         if (assetsDirFile.exists() && assetsDirFile.isDirectory()) {
             assetsDir = assetsDirFile
-            sourceSets.main.resources.srcDirs = [assetsDirFile]
-            println "Assets directory set to: ${assetsDirFile.absolutePath}"
-        } else {
-            println "Warning: The specified asset directory does not exist or is not a directory."
         }
-    } else {
-        println "Warning: Environment variable IOS_ENV_PROJECT_ASSETS_DIR not set."
     }
+    println "Assets directory set to: ${assetsDir.absolutePath}"
+    sourceSets.main.resources.srcDirs = [assetsDir]
 }
 
-task run(dependsOn: classes, type: JavaExec) {
+task runSimulation(dependsOn: classes, type: JavaExec) {
     main = project.mainClassName
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
-    if (project.assetsDir != null) {
-        println "workingDir set to Assets directory: ${project.assetsDir.absolutePath}"
-        workingDir = project.assetsDir
-    }
+    workingDir = project.assetsDir
     ignoreExitValue = true
 }
 
@@ -34,10 +31,7 @@ task debug(dependsOn: classes, type: JavaExec) {
     main = project.mainClassName
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
-    if (project.assetsDir != null) {
-        println "workingDir set to Assets directory: ${project.assetsDir.absolutePath}"
-        workingDir = project.assetsDir
-    }
+    workingDir = project.assetsDir
     ignoreExitValue = true
     debug = true
 }
@@ -46,11 +40,40 @@ task dist(type: Jar) {
     manifest {
         attributes 'Main-Class': project.mainClassName
     }
+    duplicatesStrategy = 'include'
     dependsOn configurations.runtimeClasspath
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
     with jar
+    archiveFileName = System.getenv('OIS_ENV_PROJECT_NAME') + '.jar'
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+    destinationDirectory = file("$buildDir/lib")
 }
-
+jpackageImage.dependsOn dist
 dist.dependsOn classes
+
+runtime {
+    options = ['--strip-debug',
+               '--compress', '2',
+               '--no-header-files',
+               '--no-man-pages',
+               '--strip-native-commands',
+               '--vm', 'server']
+    modules = ['java.base' ,
+               'java.desktop',
+               'jdk.unsupported']
+    distDir = file(buildDir)
+
+    jpackage {
+        //jpackageHome = '/usr/lib/jvm/open-jdk'
+        mainJar = dist.archiveFileName.get()
+        if (osName.contains('windows')) {
+            imageOptions = ["--icon", file("../assets/.ois/icons/icon128.ico")]
+        } else if (osName.contains('linux')) {
+            imageOptions = ["--icon", file("../assets/.ois/icons/icon128.png")]
+        } else if (osName.contains('mac')) {
+            imageOptions = ["--icon", file("../assets/.ois/icons/icon128.icns")]
+        }
+    }
+}
