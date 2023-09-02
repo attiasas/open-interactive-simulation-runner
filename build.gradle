@@ -39,7 +39,9 @@ project(":desktop-runner") {
     apply plugin: "java-library"
 
     dependencies {
-        api files(System.getenv('OIS_ENV_PROJECT_JAR_PATH') ?: '..\\assets\\ois\\dynamic.jar')
+        if (System.getenv('OIS_ENV_PROJECT_JAR_PATH') != null) {
+            api files(System.getenv('OIS_ENV_PROJECT_JAR_PATH'))
+        }
 
         api "org.attias.open.interactive.simulation:open-interactive-simulation-core:$coreVersion"
         api "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
@@ -56,7 +58,9 @@ project(":android-runner") {
 
     dependencies {
         api "org.attias.open.interactive.simulation:open-interactive-simulation-core:$coreVersion"
-        api files(System.getenv('OIS_ENV_PROJECT_JAR_PATH') ?: '..\\assets\\ois\\dynamic.jar')
+        if (System.getenv('OIS_ENV_PROJECT_JAR_PATH') != null) {
+            api files(System.getenv('OIS_ENV_PROJECT_JAR_PATH'))
+        }
 
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx-controllers:gdx-controllers-core:$gdxControllersVersion"
