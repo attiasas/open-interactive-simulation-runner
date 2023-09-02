@@ -30,23 +30,19 @@ public class DesktopLauncher {
     }
 
     public static void addIcons(LwjglApplicationConfiguration config) {
-        if (System.getenv("OIS_ENV_PROJECT_ASSETS_DIR") != null) {
+        if (System.getenv(AppConfiguration.ENV_PROJECT_ASSETS_DIR) != null) {
             // Running not in publish mode
             return;
         }
-        String extension = ".png";
-        String osName = System.getenv("os.name");
-        if (osName != null && osName.contains("darwin")) {
-            extension = ".icns";
+        ProjectUtils.IconExtension extension = ProjectUtils.IconExtension.PNG;
+        if (ProjectUtils.DesktopOS.Mac.equals(ProjectUtils.getCurrentOS())) {
+            extension = ProjectUtils.IconExtension.ICNS;
         }
-        int[] sizes = new int[]{128, 32};
-        System.out.println("Loading icons");
-        for (int size : sizes) {
+        for (int size : ProjectUtils.DESKTOP_ICON_SIZES) {
             try {
-                System.out.println("loading icon" + extension + ": " + size);
-                config.addIcon(ProjectUtils.OIS + "/icons/icon" + size + extension, Files.FileType.Internal);
+                config.addIcon(ProjectUtils.getDesktopIconResourcePath(extension, size), Files.FileType.Internal);
             } catch (Exception e) {
-                System.out.println("found exception");
+                e.printStackTrace();
             }
         }
     }

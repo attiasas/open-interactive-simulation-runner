@@ -31,7 +31,7 @@ To streamline deployment, we've developed the [OIS deployer](https://github.com/
 ## 📦 Installation
 
 The project is not available in Maven central, required to be used locally
-Install locally OIS core library:
+Install OIS core library:
 
 1. Clone the [core library](https://github.com/attiasas/open-interactive-simulation-core)
     ```bash
@@ -45,29 +45,35 @@ Install locally OIS core library:
 ---
 ## 🏗️ Usage
 
-Each sub module coresponse to a different project that is used to run/deploy to a specific platform.
+Each submodule correspond to a different project that is used to run/deploy to a specific platform.
 Use the task configured by the project.
 
 ### Running
 When running the gradle commands configure the following environment variables:
 
-| Environment Variable        | Description                                             |
-|-----------------------------|---------------------------------------------------------|
-| OIS_ENV_PROJECT_CONFIG_PATH | path to the `simulation.ois` project configuration file |
-| OIS_ENV_PROJECT_JAR_PATH    | path to the OIS project Jar location                    |
-| OIS_ENV_PROJECT_ASSETS_DIR  | (Optional) path to your project resource directory      |
+| Environment Variable        | Description                                                                           |
+|-----------------------------|---------------------------------------------------------------------------------------|
+| OIS_ENV_DEBUG_MODE          | Tell the runner to run on debug mode and not published                                |
+| OIS_ENV_PROJECT_CONFIG_PATH | path to the `simulation.ois` project configuration file                               |
+| OIS_ENV_PROJECT_JAR_PATH    | path to the OIS project Jar location                                                  |
+| OIS_ENV_PROJECT_ASSETS_DIR  | [Optional, default to yhe assets directory] path to your project resource directory   |
+| OIS_ENV_ANDROID_SDK_PATH    | [Optional, default to the value of 'ANDROID_HOME'] path to your Android sdk directory |
 
 ### Distributing
 When running the gradle commands configure the following environment variables:
 
-| Environment Variable     | Description                              |
-|--------------------------|------------------------------------------|
-| OIS_ENV_PROJECT_NAME     | the base name of the generated artifacts |
-| OIS_ENV_PROJECT_JAR_PATH | path to the OIS project Jar location     |
+| Environment Variable        | Description                                                                         |
+|-----------------------------|-------------------------------------------------------------------------------------|
+| OIS_ENV_PROJECT_NAME        | the base name of the generated artifacts                                            |
+| OIS_ENV_PROJECT_JAR_PATH    | path to the OIS project Jar location                                                |
+| OIS_ENV_PROJECT_GROUP       | group name of the generated artifacts                                               |
+| OIS_ENV_PROJECT_VERSION     | version of the generated artifacts                                                  |
+| OIS_ENV_PROJECT_VERSION_NUM | version number (typically incremented with each release) of the generated artifacts |
 
 The resources needs to be placed at the `assets` directory at the root project
-Create a directory named `.ois` and place the `simulation.ois` file inside.
+Create a directory named `ois` and place the `simulation.ois` file inside.
 Icons may be placed inside an `icons` directory.
+Android Icons may be placed at `res` directory at `android-runner`.
 
 ## 🐞 Reporting Issues
 
@@ -79,5 +85,4 @@ by [reporting any issues](https://github.com/attiasas/open-interactive-simulatio
 
 ## 🤝 Contributions
 
-We welcome pull requests from the community. To help us improve this project, please read
-our [Contribution](./CONTRIBUTING.md) guide.
+We welcome pull requests from the community. To help us improve this project.

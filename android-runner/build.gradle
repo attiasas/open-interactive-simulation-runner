@@ -1,5 +1,11 @@
+def projectGroup = System.getenv("OIS_ENV_DEBUG_MODE") ? 'org.attias.open.interactive.simulation.android' : System.getenv('OIS_ENV_PROJECT_GROUP')
+def projectAppId = System.getenv("OIS_ENV_DEBUG_MODE") ? 'org.attias.open.interactive.simulation.android' : System.getenv('OIS_ENV_PROJECT_GROUP') + "." + System.getenv('OIS_ENV_PROJECT_NAME')
+
+println "Android project group set to: $projectGroup"
+println "Android project appId set to: $projectAppId"
+
 android {
-    namespace 'org.attias.open.interactive.simulation.android'
+    namespace projectGroup
     buildToolsVersion "33.0.2"
     compileSdkVersion 32
     sourceSets {
@@ -18,11 +24,12 @@ android {
         exclude 'META-INF/robovm/ios/robovm.xml'
     }
     defaultConfig {
-        applicationId "org.attias.open.interactive.simulation.android"
+        applicationId projectAppId
+        archivesBaseName = System.getenv("OIS_ENV_DEBUG_MODE") ? "$applicationId" : System.getenv('OIS_ENV_PROJECT_NAME')
         minSdkVersion 16
         targetSdkVersion 32
-        versionCode 1
-        versionName "1.0"
+        versionCode Integer.parseInt(System.getenv('OIS_ENV_PROJECT_VERSION_NUM') ?: '1')
+        versionName System.getenv('OIS_ENV_PROJECT_VERSION')
     }
     buildTypes {
         release {
@@ -70,5 +77,5 @@ tasks.register('runAndroid', Exec) {
     }
     def adb = path + "/platform-tools/adb"
     println "Android SDK path set to: ${path}"
-    commandLine "$adb", 'shell', 'am', 'start', '-n', 'org.attias.open.interactive.simulation.android/org.attias.open.interactive.simulation.android.AndroidLauncher'
+    commandLine "$adb", 'shell', 'am', 'start', '-n','org.attias.open.interactive.simulation.android/org.attias.open.interactive.simulation.android.AndroidLauncher'
 }
