@@ -8,6 +8,7 @@ import org.attias.open.interactive.simulation.core.backend.engine.InteractiveSim
 import org.attias.open.interactive.simulation.core.backend.utils.ProjectUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 public class DesktopLauncher {
     public static void main (String[] arg) throws IOException {
@@ -16,34 +17,32 @@ public class DesktopLauncher {
     }
 
     public static AppConfiguration getConfigurations(LwjglApplicationConfiguration config) throws IOException {
-        AppConfiguration appConfiguration = AppConfiguration.getRunnerConfigurations();
+        try (InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(ProjectUtils.getProjectConfigurationsAssetsPath())) {
+            AppConfiguration appConfiguration = AppConfiguration.getRunnerConfigurations(in);
 
-        appConfiguration.setType(AppConfiguration.AppType.Desktop);
-        config.title = appConfiguration.getProjectConfiguration().title;
+            appConfiguration.setType(AppConfiguration.AppType.Desktop);
+            config.title = appConfiguration.getProjectConfiguration().title;
 
-        addIcons(config);
+            addIcons(config);
 
-        return appConfiguration;
+            return appConfiguration;
+        }
     }
 
     public static void addIcons(LwjglApplicationConfiguration config) {
-        if (System.getenv("OIS_ENV_PROJECT_ASSETS_DIR") != null) {
+        if (System.getenv(AppConfiguration.ENV_PROJECT_ASSETS_DIR) != null) {
             // Running not in publish mode
             return;
         }
-        String extension = ".png";
-        String osName = System.getenv("os.name");
-        if (osName != null && osName.contains("darwin")) {
-            extension = ".icns";
+        ProjectUtils.IconExtension extension = ProjectUtils.IconExtension.PNG;
+        if (ProjectUtils.DesktopOS.Mac.equals(ProjectUtils.getCurrentOS())) {
+            extension = ProjectUtils.IconExtension.ICNS;
         }
-        int[] sizes = new int[]{128, 32};
-        System.out.println("Loading icons");
-        for (int size : sizes) {
+        for (int size : ProjectUtils.DESKTOP_ICON_SIZES) {
             try {
-                System.out.println("loading icon" + extension + ": " + size);
-                config.addIcon(ProjectUtils.OIS_DIRECTORY_NAME + "/icons/icon" + size + extension, Files.FileType.Internal);
+                config.addIcon(ProjectUtils.getDesktopIconResourcePath(extension, size), Files.FileType.Internal);
             } catch (Exception e) {
-                System.out.println("found exception");
+                e.printStackTrace();
             }
         }
     }

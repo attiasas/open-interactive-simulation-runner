@@ -5,6 +5,8 @@ on: push
 jobs:
   test:
     runs-on: ${{ matrix.os }}
+    env:
+      OIS_ENV_DEBUG_MODE : true
     strategy:
       fail-fast: false
       matrix:
